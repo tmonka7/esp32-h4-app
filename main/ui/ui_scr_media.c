@@ -64,16 +64,15 @@ static int scan_media(const char *const *dirs, const char *const *exts)
             continue;
         }
 
-        strncpy(s_dir, dirs[di], sizeof(s_dir) - 1);
-        s_dir[sizeof(s_dir) - 1] = '\0';
+        snprintf(s_dir, sizeof(s_dir), "%s", dirs[di]);
 
         struct dirent *ent;
         while (s_file_count < MEDIA_MAX_FILES && (ent = readdir(d)) != NULL) {
             if (ent->d_name[0] == '.' || !has_ext(ent->d_name, exts)) {
                 continue;
             }
-            strncpy(s_files[s_file_count], ent->d_name, MEDIA_NAME_LEN - 1);
-            s_files[s_file_count][MEDIA_NAME_LEN - 1] = '\0';
+            snprintf(s_files[s_file_count], sizeof(s_files[s_file_count]), "%s",
+                     ent->d_name);
             s_file_count++;
         }
         closedir(d);

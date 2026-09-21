@@ -27,20 +27,27 @@ extern "C" {
 /* ------------------------------------------------------------------ */
 /* Palette - dark navy, matching the reference design                 */
 /* ------------------------------------------------------------------ */
-#define UI_COL_BG         lv_color_hex(0x060A12)
-#define UI_COL_BAR        lv_color_hex(0x0B1220)
-#define UI_COL_CARD       lv_color_hex(0x101A2C)
-#define UI_COL_CARD_ALT   lv_color_hex(0x16223A)
-#define UI_COL_BORDER     lv_color_hex(0x1E2D47)
-#define UI_COL_TEXT       lv_color_hex(0xE9EFF8)
-#define UI_COL_TEXT_DIM   lv_color_hex(0x8494AC)
-#define UI_COL_ACCENT     lv_color_hex(0x2F86F6)
-#define UI_COL_GREEN      lv_color_hex(0x2ECC71)
-#define UI_COL_AMBER      lv_color_hex(0xF2B23C)
-#define UI_COL_RED        lv_color_hex(0xE7513F)
-#define UI_COL_PURPLE     lv_color_hex(0x9B6BF2)
-#define UI_COL_PINK       lv_color_hex(0xEC4D7D)
-#define UI_COL_CYAN       lv_color_hex(0x36C5D8)
+/*
+ * Use LVGL's own color constructor here; a compound literal like
+ * ((lv_color_t){ .full = ... }) is not a constant expression and cannot be
+ * used in file-scope/static initializers in plain C.
+ */
+#define UI_COL_RGB(r, g, b) LV_COLOR_MAKE((r), (g), (b))
+
+#define UI_COL_BG         UI_COL_RGB(0x06, 0x0A, 0x12)
+#define UI_COL_BAR        UI_COL_RGB(0x0B, 0x12, 0x20)
+#define UI_COL_CARD       UI_COL_RGB(0x10, 0x1A, 0x2C)
+#define UI_COL_CARD_ALT   UI_COL_RGB(0x16, 0x22, 0x3A)
+#define UI_COL_BORDER     UI_COL_RGB(0x1E, 0x2D, 0x47)
+#define UI_COL_TEXT       UI_COL_RGB(0xE9, 0xEF, 0xF8)
+#define UI_COL_TEXT_DIM   UI_COL_RGB(0x84, 0x94, 0xAC)
+#define UI_COL_ACCENT     UI_COL_RGB(0x2F, 0x86, 0xF6)
+#define UI_COL_GREEN      UI_COL_RGB(0x2E, 0xCC, 0x71)
+#define UI_COL_AMBER      UI_COL_RGB(0xF2, 0xB2, 0x3C)
+#define UI_COL_RED        UI_COL_RGB(0xE7, 0x51, 0x3F)
+#define UI_COL_PURPLE     UI_COL_RGB(0x9B, 0x6B, 0xF2)
+#define UI_COL_PINK       UI_COL_RGB(0xEC, 0x4D, 0x7D)
+#define UI_COL_CYAN       UI_COL_RGB(0x36, 0xC5, 0xD8)
 
 /* ------------------------------------------------------------------ */
 /* Screens                                                            */

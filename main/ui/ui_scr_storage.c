@@ -256,8 +256,7 @@ static void files_refresh(void)
     }
 
     for (int i = 0; i < n; i++) {
-        strncpy(s_names[i], entries[i].name, sizeof(s_names[i]) - 1);
-        s_names[i][sizeof(s_names[i]) - 1] = '\0';
+        snprintf(s_names[i], sizeof(s_names[i]), "%s", entries[i].name);
 
         char right[48];
         if (entries[i].is_dir) {
