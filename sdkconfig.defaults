@@ -1,0 +1,100 @@
+# ---------------------------------------------------------------------------
+# JC8012P4A1_BSP_ESP32P4 - default configuration
+# Target: esp32p4   |   ESP-IDF: v5.3 (v5.4 / v5.5 also OK)
+# ---------------------------------------------------------------------------
+CONFIG_IDF_TARGET="esp32p4"
+
+# ESP32-P4 is still a preview target on ESP-IDF v5.3; this flag is what makes
+# `idf.py set-target esp32p4` succeed there. It is harmless on v5.4+.
+CONFIG_IDF_EXPERIMENTAL_FEATURES=y
+
+# --- Flash / partitions ----------------------------------------------------
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE_DETECT=n
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# --- PSRAM (32 MB on the P4NRW32 module) -----------------------------------
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_HEX=y
+CONFIG_SPIRAM_SPEED_200M=y
+CONFIG_SPIRAM_XIP_FROM_PSRAM=y
+CONFIG_SPIRAM_USE_MALLOC=y
+# 256 KB L2 keeps the 64-byte line size; 128-byte lines require the 512 KB
+# option, which would take that memory away from PSRAM-backed buffers.
+CONFIG_CACHE_L2_CACHE_256KB=y
+
+# --- CPU / RTOS ------------------------------------------------------------
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_360=y
+CONFIG_FREERTOS_HZ=1000
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=10240
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+
+# --- Console on UART0 (GPIO37 TX / GPIO38 RX, the 4-pin MX1.25 header) ------
+# The board brings UART0 out on CN2 and to the on-board CH340. Keep the console
+# there rather than on USB-Serial-JTAG so the header is the primary log path.
+CONFIG_ESP_CONSOLE_UART_DEFAULT=y
+CONFIG_ESP_CONSOLE_UART_NUM=0
+CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
+
+# --- LVGL ------------------------------------------------------------------
+CONFIG_LV_COLOR_DEPTH_16=y
+CONFIG_LV_USE_CLIB_MALLOC=y
+CONFIG_LV_USE_CLIB_STRING=y
+CONFIG_LV_USE_CLIB_SPRINTF=y
+CONFIG_LV_OS_FREERTOS=y
+CONFIG_LV_DEF_REFR_PERIOD=16
+CONFIG_LV_DRAW_SW_DRAW_UNIT_CNT=2
+CONFIG_LV_ATTRIBUTE_FAST_MEM_USE_IRAM=y
+CONFIG_LV_FONT_MONTSERRAT_12=y
+CONFIG_LV_FONT_MONTSERRAT_14=y
+CONFIG_LV_FONT_MONTSERRAT_16=y
+CONFIG_LV_FONT_MONTSERRAT_18=y
+CONFIG_LV_FONT_MONTSERRAT_20=y
+CONFIG_LV_FONT_MONTSERRAT_24=y
+CONFIG_LV_FONT_MONTSERRAT_28=y
+CONFIG_LV_FONT_MONTSERRAT_36=y
+CONFIG_LV_FONT_MONTSERRAT_48=y
+CONFIG_LV_USE_FONT_COMPRESSED=y
+
+# demos/ and examples/ are NOT vendored (see components/lvgl/demos/.gitkeep).
+# Leave these off or the build will fail to find their sources.
+CONFIG_LV_BUILD_EXAMPLES=n
+CONFIG_LV_USE_DEMO_WIDGETS=n
+CONFIG_LV_USE_DEMO_BENCHMARK=n
+CONFIG_LV_USE_DEMO_MUSIC=n
+CONFIG_LV_USE_DEMO_STRESS=n
+
+# Image decoders used by the Photo viewer for files on the TF card.
+CONFIG_LV_USE_LODEPNG=y
+CONFIG_LV_USE_BMP=y
+CONFIG_LV_USE_TJPGD=y
+CONFIG_LV_USE_FS_STDIO=y
+CONFIG_LV_FS_STDIO_LETTER=83
+CONFIG_LV_FS_STDIO_PATH=""
+CONFIG_LV_FS_STDIO_CACHE_SIZE=4096
+
+# --- FATFS (TF card) -------------------------------------------------------
+CONFIG_FATFS_LFN_HEAP=y
+CONFIG_FATFS_MAX_LFN=255
+CONFIG_FATFS_ALLOC_PREFER_EXTRAM=y
+
+# --- Misc ------------------------------------------------------------------
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+CONFIG_ESP_TASK_WDT_TIMEOUT_S=10
+
+# --- Audio codec (esp_codec_dev) -------------------------------------------
+CONFIG_CODEC_ES8311_SUPPORT=y
+CONFIG_CODEC_ES7210_SUPPORT=n
+CONFIG_CODEC_ES8388_SUPPORT=n
+CONFIG_CODEC_ES8156_SUPPORT=n
+CONFIG_CODEC_ES7243_SUPPORT=n
+CONFIG_CODEC_ES7243E_SUPPORT=n
+CONFIG_CODEC_ES8374_SUPPORT=n
+CONFIG_CODEC_TAS5805M_SUPPORT=n
+CONFIG_CODEC_AW88298_SUPPORT=n
+CONFIG_CODEC_ZL38063_SUPPORT=n
+# Use the i2c_master driver rather than the deprecated legacy i2c API.
+CONFIG_CODEC_I2C_BACKWARD_COMPATIBLE=n

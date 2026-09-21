@@ -1,0 +1,4 @@
+LVGL's bundled examples/ were removed from this vendored copy to keep the repo small.
+This directory must exist because env_support/cmake/esp.cmake passes it to
+idf_component_register(INCLUDE_DIRS ...), and ESP-IDF errors on a missing include dir.
+Keep CONFIG_LV_BUILD_EXAMPLES = n (see sdkconfig.defaults).

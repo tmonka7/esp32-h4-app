@@ -1,0 +1,119 @@
+menu "Board Support Package (JC8012P4A1)"
+
+    config BSP_DISPLAY_BRIGHTNESS_DEFAULT
+        int "Default backlight brightness (%)"
+        range 0 100
+        default 80
+
+    config BSP_DISPLAY_LVGL_BUF_LINES
+        int "LVGL draw buffer height, in display lines"
+        range 40 1280
+        default 200
+        help
+            The draw buffer is BSP_LCD_H_RES * this many pixels, allocated in
+            PSRAM. Software rotation needs a reasonably large buffer; 200 lines
+            at 800 px wide and 16 bpp is 320 KB.
+
+    config BSP_DISPLAY_LVGL_TASK_PRIORITY
+        int "LVGL task priority"
+        range 1 24
+        default 4
+
+    config BSP_DISPLAY_LVGL_TASK_STACK
+        int "LVGL task stack size (bytes)"
+        default 8192
+
+    choice BSP_DISPLAY_ROTATION
+        prompt "UI orientation"
+        default BSP_DISPLAY_ROTATION_90
+        help
+            The panel is physically 800x1280 (portrait). The control-panel UI
+            is laid out for landscape, which needs a 90 or 270 degree software
+            rotation. Portrait is faster but the screens will not match the
+            reference design.
+
+        config BSP_DISPLAY_ROTATION_0
+            bool "0 deg - portrait 800x1280 (native, fastest)"
+        config BSP_DISPLAY_ROTATION_90
+            bool "90 deg - landscape 1280x800"
+        config BSP_DISPLAY_ROTATION_180
+            bool "180 deg - portrait, flipped"
+        config BSP_DISPLAY_ROTATION_270
+            bool "270 deg - landscape, flipped"
+    endchoice
+
+    menu "Touch panel"
+        config BSP_TOUCH_SWAP_XY
+            bool "Swap touch X and Y"
+            default n
+        config BSP_TOUCH_MIRROR_X
+            bool "Mirror touch X"
+            default n
+        config BSP_TOUCH_MIRROR_Y
+            bool "Mirror touch Y"
+            default y
+            help
+                Defaults match the vendor ESP-IDF BSP for this panel. If touch
+                lands in the wrong place, flip these rather than patching code.
+    endmenu
+
+    menu "UART test port"
+        config BSP_UART_TEST_PORT
+            int "UART port number used for the TX/RX test"
+            range 1 4
+            default 1
+            help
+                Must not be 0 - UART0 is the console.
+
+        config BSP_UART_TEST_TX_GPIO
+            int "Test UART TX GPIO"
+            default 45
+            help
+                Free pin on the FPC3 expansion header. Available there:
+                GPIO2, 3, 4, 5, 45, 46, 47, 48. FPC4 has GPIO28..34.
+
+        config BSP_UART_TEST_RX_GPIO
+            int "Test UART RX GPIO"
+            default 46
+
+        config BSP_UART_TEST_BAUD
+            int "Test UART baud rate"
+            default 115200
+
+        config BSP_UART_TEST_ON_BOOT
+            bool "Run the internal loopback self-test at boot"
+            default y
+            help
+                Runs BSP_UART_TEST_INTERNAL during startup and logs the result.
+                The external (jumpered) test is always available from the UART
+                screen in the UI.
+    endmenu
+
+    menu "Audio"
+        config BSP_AUDIO_ENABLE
+            bool "Initialise the ES8311 codec at boot"
+            default y
+
+        config BSP_AUDIO_SAMPLE_RATE
+            int "Sample rate (Hz)"
+            default 16000
+
+        config BSP_AUDIO_VOLUME_DEFAULT
+            int "Default volume (%)"
+            range 0 100
+            default 60
+    endmenu
+
+    config BSP_SDCARD_MOUNT_ON_BOOT
+        bool "Mount the TF card at boot"
+        default y
+
+    config BSP_SDCARD_FORMAT_IF_MOUNT_FAILED
+        bool "Format the TF card if it cannot be mounted"
+        default n
+        depends on BSP_SDCARD_MOUNT_ON_BOOT
+        help
+            Leave this off. Turning it on will erase an unreadable card
+            instead of reporting the failure.
+
+endmenu
