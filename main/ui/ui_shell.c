@@ -37,19 +37,19 @@ void ui_build_uart(lv_obj_t *c);
 void ui_tick_uart(void);
 
 static const ui_screen_desc_t s_screens[UI_SCR_COUNT] = {
-    [UI_SCR_HOME]     = { "Home",         LV_SYMBOL_HOME,         UI_COL_ACCENT, ui_build_home,     ui_tick_home },
-    [UI_SCR_BATTERY]  = { "Battery",      LV_SYMBOL_BATTERY_FULL, UI_COL_GREEN,  ui_build_battery,  ui_tick_battery },
-    [UI_SCR_TIMER]    = { "Timer",        LV_SYMBOL_BELL,         UI_COL_CYAN,   ui_build_timer,    ui_tick_timer },
-    [UI_SCR_VIDEO]    = { "Video Player", LV_SYMBOL_VIDEO,        UI_COL_ACCENT, ui_build_video,    NULL },
-    [UI_SCR_MUSIC]    = { "Music",        LV_SYMBOL_AUDIO,        UI_COL_PINK,   ui_build_music,    ui_tick_music },
-    [UI_SCR_PHOTO]    = { "Photo",        LV_SYMBOL_IMAGE,        UI_COL_PURPLE, ui_build_photo,    NULL },
-    [UI_SCR_SDCARD]   = { "SD Card",      LV_SYMBOL_SD_CARD,      UI_COL_PURPLE, ui_build_sdcard,   NULL },
-    [UI_SCR_FILES]    = { "File Manager", LV_SYMBOL_DIRECTORY,    UI_COL_AMBER,  ui_build_files,    NULL },
-    [UI_SCR_CAMERA]   = { "Camera",       LV_SYMBOL_EYE_OPEN,     UI_COL_CYAN,   ui_build_camera,   NULL },
-    [UI_SCR_SETTINGS] = { "Settings",     LV_SYMBOL_SETTINGS,     UI_COL_ACCENT, ui_build_settings, NULL },
-    [UI_SCR_WIDGETS]  = { "Widgets",      LV_SYMBOL_LIST,         UI_COL_AMBER,  ui_build_widgets,  ui_tick_widgets },
-    [UI_SCR_ABOUT]    = { "About",        LV_SYMBOL_BULLET,       UI_COL_ACCENT, ui_build_about,    NULL },
-    [UI_SCR_UART]     = { "UART",         LV_SYMBOL_USB,          UI_COL_GREEN,  ui_build_uart,     ui_tick_uart },
+    [UI_SCR_HOME]     = { "Home",         LV_SYMBOL_HOME,         UI_COL_INIT(UI_HEX_ACCENT), ui_build_home,     ui_tick_home },
+    [UI_SCR_BATTERY]  = { "Battery",      LV_SYMBOL_BATTERY_FULL, UI_COL_INIT(UI_HEX_GREEN),  ui_build_battery,  ui_tick_battery },
+    [UI_SCR_TIMER]    = { "Timer",        LV_SYMBOL_BELL,         UI_COL_INIT(UI_HEX_CYAN),   ui_build_timer,    ui_tick_timer },
+    [UI_SCR_VIDEO]    = { "Video Player", LV_SYMBOL_VIDEO,        UI_COL_INIT(UI_HEX_ACCENT), ui_build_video,    NULL },
+    [UI_SCR_MUSIC]    = { "Music",        LV_SYMBOL_AUDIO,        UI_COL_INIT(UI_HEX_PINK),   ui_build_music,    ui_tick_music },
+    [UI_SCR_PHOTO]    = { "Photo",        LV_SYMBOL_IMAGE,        UI_COL_INIT(UI_HEX_PURPLE), ui_build_photo,    NULL },
+    [UI_SCR_SDCARD]   = { "SD Card",      LV_SYMBOL_SD_CARD,      UI_COL_INIT(UI_HEX_PURPLE), ui_build_sdcard,   NULL },
+    [UI_SCR_FILES]    = { "File Manager", LV_SYMBOL_DIRECTORY,    UI_COL_INIT(UI_HEX_AMBER),  ui_build_files,    NULL },
+    [UI_SCR_CAMERA]   = { "Camera",       LV_SYMBOL_EYE_OPEN,     UI_COL_INIT(UI_HEX_CYAN),   ui_build_camera,   NULL },
+    [UI_SCR_SETTINGS] = { "Settings",     LV_SYMBOL_SETTINGS,     UI_COL_INIT(UI_HEX_ACCENT), ui_build_settings, NULL },
+    [UI_SCR_WIDGETS]  = { "Widgets",      LV_SYMBOL_LIST,         UI_COL_INIT(UI_HEX_AMBER),  ui_build_widgets,  ui_tick_widgets },
+    [UI_SCR_ABOUT]    = { "About",        LV_SYMBOL_BULLET,       UI_COL_INIT(UI_HEX_ACCENT), ui_build_about,    NULL },
+    [UI_SCR_UART]     = { "UART",         LV_SYMBOL_USB,          UI_COL_INIT(UI_HEX_GREEN),  ui_build_uart,     ui_tick_uart },
 };
 
 static lv_obj_t      *s_root;

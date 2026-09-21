@@ -28,26 +28,49 @@ extern "C" {
 /* Palette - dark navy, matching the reference design                 */
 /* ------------------------------------------------------------------ */
 /*
- * Use LVGL's own color constructor here; a compound literal like
- * ((lv_color_t){ .full = ... }) is not a constant expression and cannot be
- * used in file-scope/static initializers in plain C.
+ * Each colour is defined once as a 0xRRGGBB literal and exposed in two forms.
+ *
+ * LV_COLOR_MAKE() expands to a brace-enclosed initialiser list ({b, g, r}),
+ * so it is only valid where an initialiser is expected - passing it to a
+ * function is a syntax error.  lv_color_hex() is the expression form, but
+ * being a call it is not a constant expression and cannot appear in a
+ * file-scope initialiser.
+ *
+ * Use UI_COL_* for arguments and assignments; use UI_COL_INIT(UI_HEX_*) in
+ * static/file-scope initialisers such as the screen table in ui_shell.c.
  */
-#define UI_COL_RGB(r, g, b) LV_COLOR_MAKE((r), (g), (b))
+#define UI_COL_INIT(hex) \
+    LV_COLOR_MAKE(((hex) >> 16) & 0xFF, ((hex) >> 8) & 0xFF, (hex) & 0xFF)
 
-#define UI_COL_BG         UI_COL_RGB(0x06, 0x0A, 0x12)
-#define UI_COL_BAR        UI_COL_RGB(0x0B, 0x12, 0x20)
-#define UI_COL_CARD       UI_COL_RGB(0x10, 0x1A, 0x2C)
-#define UI_COL_CARD_ALT   UI_COL_RGB(0x16, 0x22, 0x3A)
-#define UI_COL_BORDER     UI_COL_RGB(0x1E, 0x2D, 0x47)
-#define UI_COL_TEXT       UI_COL_RGB(0xE9, 0xEF, 0xF8)
-#define UI_COL_TEXT_DIM   UI_COL_RGB(0x84, 0x94, 0xAC)
-#define UI_COL_ACCENT     UI_COL_RGB(0x2F, 0x86, 0xF6)
-#define UI_COL_GREEN      UI_COL_RGB(0x2E, 0xCC, 0x71)
-#define UI_COL_AMBER      UI_COL_RGB(0xF2, 0xB2, 0x3C)
-#define UI_COL_RED        UI_COL_RGB(0xE7, 0x51, 0x3F)
-#define UI_COL_PURPLE     UI_COL_RGB(0x9B, 0x6B, 0xF2)
-#define UI_COL_PINK       UI_COL_RGB(0xEC, 0x4D, 0x7D)
-#define UI_COL_CYAN       UI_COL_RGB(0x36, 0xC5, 0xD8)
+#define UI_HEX_BG         0x060A12
+#define UI_HEX_BAR        0x0B1220
+#define UI_HEX_CARD       0x101A2C
+#define UI_HEX_CARD_ALT   0x16223A
+#define UI_HEX_BORDER     0x1E2D47
+#define UI_HEX_TEXT       0xE9EFF8
+#define UI_HEX_TEXT_DIM   0x8494AC
+#define UI_HEX_ACCENT     0x2F86F6
+#define UI_HEX_GREEN      0x2ECC71
+#define UI_HEX_AMBER      0xF2B23C
+#define UI_HEX_RED        0xE7513F
+#define UI_HEX_PURPLE     0x9B6BF2
+#define UI_HEX_PINK       0xEC4D7D
+#define UI_HEX_CYAN       0x36C5D8
+
+#define UI_COL_BG         lv_color_hex(UI_HEX_BG)
+#define UI_COL_BAR        lv_color_hex(UI_HEX_BAR)
+#define UI_COL_CARD       lv_color_hex(UI_HEX_CARD)
+#define UI_COL_CARD_ALT   lv_color_hex(UI_HEX_CARD_ALT)
+#define UI_COL_BORDER     lv_color_hex(UI_HEX_BORDER)
+#define UI_COL_TEXT       lv_color_hex(UI_HEX_TEXT)
+#define UI_COL_TEXT_DIM   lv_color_hex(UI_HEX_TEXT_DIM)
+#define UI_COL_ACCENT     lv_color_hex(UI_HEX_ACCENT)
+#define UI_COL_GREEN      lv_color_hex(UI_HEX_GREEN)
+#define UI_COL_AMBER      lv_color_hex(UI_HEX_AMBER)
+#define UI_COL_RED        lv_color_hex(UI_HEX_RED)
+#define UI_COL_PURPLE     lv_color_hex(UI_HEX_PURPLE)
+#define UI_COL_PINK       lv_color_hex(UI_HEX_PINK)
+#define UI_COL_CYAN       lv_color_hex(UI_HEX_CYAN)
 
 /* ------------------------------------------------------------------ */
 /* Screens                                                            */
