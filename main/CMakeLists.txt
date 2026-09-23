@@ -2,6 +2,7 @@ idf_component_register(
     SRCS
         "main.c"
         "app_wav.c"
+        "cam_stream.c"
         "ui/ui_theme.c"
         "ui/ui_shell.c"
         "ui/ui_scr_home.c"
@@ -9,6 +10,7 @@ idf_component_register(
         "ui/ui_scr_storage.c"
         "ui/ui_scr_media.c"
         "ui/ui_scr_tools.c"
+        "ui/ui_scr_camview.c"
     INCLUDE_DIRS
         "."
         "ui"
@@ -23,4 +25,6 @@ idf_component_register(
         spi_flash        # esp_flash_get_size()
         vfs
         fatfs
+        esp_http_client  # Cam Remote: MJPEG over HTTP
+        esp_netif
 )

@@ -85,6 +85,7 @@ typedef enum {
     UI_SCR_SDCARD,
     UI_SCR_FILES,
     UI_SCR_CAMERA,
+    UI_SCR_CAMVIEW,
     UI_SCR_SETTINGS,
     UI_SCR_WIDGETS,
     UI_SCR_ABOUT,

@@ -1,0 +1,12 @@
+menu "Camera remote view"
+
+    config APP_CAM_STREAM_URL
+        string "Default MJPEG stream URL"
+        default "http://192.168.4.1:81/stream"
+        help
+            Multipart MJPEG endpoint shown on the Cam Remote screen, e.g. an
+            ESP32-CAM CameraWebServer at http://<ip>:81/stream. The URL can be
+            edited on the device; the edited value is kept in NVS and takes
+            precedence over this default.
+
+endmenu

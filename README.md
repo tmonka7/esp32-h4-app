@@ -184,6 +184,12 @@ Known deliberate limitations, not bugs:
   vendored, and the board ships without a sensor on the CSI connector.
 - **Wi-Fi / Bluetooth.** Would need `esp_hosted`/`esp_wifi_remote` driving the
   ESP32-C6 over SDIO. Not brought up; support in v5.3 is immature.
+- **Cam Remote needs a network.** The Cam Remote screen shows a network
+  camera's multipart MJPEG stream (`GET http://<camera>:81/stream`, as served
+  by ESP32-CAM CameraWebServer), decoded with LVGL's TJpgDec (baseline JPEG,
+  up to 1920x1080). The URL defaults to `CONFIG_APP_CAM_STREAM_URL` and can be
+  edited on the device (kept in NVS). Until a network interface is brought up
+  (see Wi-Fi above) it reports "No network" instead of opening a socket.
 - **Software rotation costs frame rate.** Landscape needs a 90° software
   rotate of every flushed area. ESP-IDF v5.4+ can offload this to the P4's PPA;
   v5.3 cannot. If you want maximum speed on v5.3, choose

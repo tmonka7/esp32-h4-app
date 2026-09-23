@@ -29,6 +29,8 @@ void ui_build_photo(lv_obj_t *c);
 void ui_build_sdcard(lv_obj_t *c);
 void ui_build_files(lv_obj_t *c);
 void ui_build_camera(lv_obj_t *c);
+void ui_build_camview(lv_obj_t *c);
+void ui_tick_camview(void);
 void ui_build_settings(lv_obj_t *c);
 void ui_build_widgets(lv_obj_t *c);
 void ui_tick_widgets(void);
@@ -46,6 +48,7 @@ static const ui_screen_desc_t s_screens[UI_SCR_COUNT] = {
     [UI_SCR_SDCARD]   = { "SD Card",      LV_SYMBOL_SD_CARD,      UI_COL_INIT(UI_HEX_PURPLE), ui_build_sdcard,   NULL },
     [UI_SCR_FILES]    = { "File Manager", LV_SYMBOL_DIRECTORY,    UI_COL_INIT(UI_HEX_AMBER),  ui_build_files,    NULL },
     [UI_SCR_CAMERA]   = { "Camera",       LV_SYMBOL_EYE_OPEN,     UI_COL_INIT(UI_HEX_CYAN),   ui_build_camera,   NULL },
+    [UI_SCR_CAMVIEW]  = { "Cam Remote",   LV_SYMBOL_WIFI,         UI_COL_INIT(UI_HEX_CYAN),   ui_build_camview,  ui_tick_camview },
     [UI_SCR_SETTINGS] = { "Settings",     LV_SYMBOL_SETTINGS,     UI_COL_INIT(UI_HEX_ACCENT), ui_build_settings, NULL },
     [UI_SCR_WIDGETS]  = { "Widgets",      LV_SYMBOL_LIST,         UI_COL_INIT(UI_HEX_AMBER),  ui_build_widgets,  ui_tick_widgets },
     [UI_SCR_ABOUT]    = { "About",        LV_SYMBOL_BULLET,       UI_COL_INIT(UI_HEX_ACCENT), ui_build_about,    NULL },
@@ -217,10 +220,10 @@ static void build_navbar(void)
     lv_obj_set_scrollbar_mode(s_navbar, LV_SCROLLBAR_MODE_OFF);
 
     /* Home is reachable from the back arrow and the app grid, so it is left
-     * out of the strip to keep the remaining twelve comfortably wide. */
+     * out of the strip to keep the remaining thirteen on one screen width. */
     for (int i = 1; i < UI_SCR_COUNT; i++) {
         lv_obj_t *btn = lv_button_create(s_navbar);
-        lv_obj_set_size(btn, 96, 66);
+        lv_obj_set_size(btn, 92, 66);
         lv_obj_set_style_bg_opa(btn, LV_OPA_TRANSP, 0);
         lv_obj_set_style_shadow_width(btn, 0, 0);
         lv_obj_set_style_radius(btn, 10, 0);
