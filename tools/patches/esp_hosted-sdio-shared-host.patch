@@ -1,0 +1,15 @@
+--- a/components/esp_hosted/host/port/sdio_wrapper.c
++++ b/components/esp_hosted/host/port/sdio_wrapper.c
+@@ -246,8 +246,11 @@ void * hosted_sdio_init(void)
+ 	sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
+ 
+ 	// initialise SDMMC host
++	// LOCAL PATCH (JC8012P4A1): the TF card on slot 0 shares this controller.
++	// On ESP-IDF v5.3 a second sdmmc_host_init() returns ESP_ERR_INVALID_STATE
++	// (v5.4+ returns ESP_OK), so whichever side comes second must accept it.
+ 	res = sdmmc_host_init();
+-	if (res != ESP_OK)
++	if (res != ESP_OK && res != ESP_ERR_INVALID_STATE)
+ 		return NULL;
+ 
+ 	// configure SDIO interface and slot

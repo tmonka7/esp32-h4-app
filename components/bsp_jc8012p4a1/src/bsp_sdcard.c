@@ -6,6 +6,10 @@
  * net ESP_LDO_VO4), so the host needs an sd_pwr_ctrl handle or the card never
  * comes out of reset.
  *
+ * Slot 1 of the same SDMMC controller carries the SDIO link to the ESP32-C6
+ * (ESP-Hosted Wi-Fi). Mounting must therefore accept a controller that is
+ * already up, and unmounting must release only slot 0, never the controller.
+ *
  * SPDX-License-Identifier: Apache-2.0
  */
 #include "bsp/jc8012p4a1.h"
@@ -14,6 +18,7 @@
 
 #include "driver/sdmmc_host.h"
 #include "esp_check.h"
+#include "esp_idf_version.h"
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
 #include "sd_pwr_ctrl_by_on_chip_ldo.h"
@@ -30,6 +35,26 @@ static const char *TAG = "bsp_sd";
 
 static sdmmc_card_t *s_card;
 static sd_pwr_ctrl_handle_t s_pwr_ctrl;
+
+static esp_err_t shared_host_init(void)
+{
+    /* ESP-IDF v5.3 returns INVALID_STATE when the controller is already up
+     * (v5.4+ returns ESP_OK); either way it is usable. */
+    const esp_err_t err = sdmmc_host_init();
+    return err == ESP_ERR_INVALID_STATE ? ESP_OK : err;
+}
+
+static esp_err_t shared_host_deinit(int slot)
+{
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 4, 0)
+    return sdmmc_host_deinit_slot(slot);
+#else
+    /* v5.3 can only tear down the whole controller, which would cut the
+     * Wi-Fi link on slot 1. Leave it running; a remount re-inits slot 0. */
+    (void)slot;
+    return ESP_OK;
+#endif
+}
 
 bool bsp_sdcard_is_mounted(void)
 {
@@ -50,6 +75,9 @@ esp_err_t bsp_sdcard_mount(void)
     sdmmc_host_t host = SDMMC_HOST_DEFAULT();
     host.slot = SDMMC_HOST_SLOT_0;
     host.max_freq_khz = SDMMC_FREQ_HIGHSPEED;
+    host.init = shared_host_init;
+    host.flags |= SDMMC_HOST_FLAG_DEINIT_ARG;
+    host.deinit_p = shared_host_deinit;
 
     if (s_pwr_ctrl == NULL) {
         const sd_pwr_ctrl_ldo_config_t ldo_config = {

@@ -22,6 +22,10 @@ REGISTRY_PINS=(
     "espressif:esp_lcd_touch:1.1.2"
     "espressif:esp_codec_dev:1.3.4"
     "espressif:cmake_utilities:0.5.3"
+    # Wi-Fi via the ESP32-C6. Same versions the board vendor built its C6
+    # slave firmware against; esp_wifi_remote 0.4.1 covers IDF v5.3 and v5.4.
+    "espressif:esp_hosted:0.0.27"
+    "espressif:esp_wifi_remote:0.4.1"
 )
 
 # Guition vendor package: board drivers not published on the registry.
@@ -87,7 +91,23 @@ rm -rf "${COMPONENTS}/esp_lvgl_port/test_apps" \
        "${COMPONENTS}/esp_lvgl_port/images/lvgl8" \
        "${COMPONENTS}/esp_codec_dev/test_apps" \
        "${COMPONENTS}/cmake_utilities/test_apps" \
-       "${COMPONENTS}/cmake_utilities/docs"
+       "${COMPONENTS}/cmake_utilities/docs" \
+       "${COMPONENTS}/esp_hosted/docs" \
+       "${COMPONENTS}/esp_hosted/examples" \
+       "${COMPONENTS}/esp_hosted/slave" \
+       "${COMPONENTS}/esp_hosted/host/port/examples" \
+       "${COMPONENTS}/esp_hosted/.gitmodules" \
+       "${COMPONENTS}/esp_wifi_remote/examples" \
+       "${COMPONENTS}/esp_wifi_remote/test" \
+       "${COMPONENTS}/esp_wifi_remote/scripts" \
+       "${COMPONENTS}/esp_wifi_remote/.cz.yaml"
+
+# --- local patches ---------------------------------------------------------
+say "applying tools/patches"
+for p in "${REPO_ROOT}"/tools/patches/*.patch; do
+    echo "  ${p##*/}"
+    git -C "${REPO_ROOT}" apply "${p}"
+done
 
 # --- Guition board drivers -------------------------------------------------
 say "Guition esp_lcd_jd9365"

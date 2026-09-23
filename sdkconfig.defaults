@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------
 # JC8012P4A1_BSP_ESP32P4 - default configuration
-# Target: esp32p4   |   ESP-IDF: v5.3 (v5.4 / v5.5 also OK)
+# Target: esp32p4   |   ESP-IDF: v5.3 (v5.4 also OK; not v5.5, see README)
 # ---------------------------------------------------------------------------
 CONFIG_IDF_TARGET="esp32p4"
 
@@ -98,3 +98,13 @@ CONFIG_CODEC_AW88298_SUPPORT=n
 CONFIG_CODEC_ZL38063_SUPPORT=n
 # Use the i2c_master driver rather than the deprecated legacy i2c API.
 CONFIG_CODEC_I2C_BACKWARD_COMPATIBLE=n
+
+# --- Wi-Fi through the ESP32-C6 (ESP-Hosted, P4 is the host) ----------------
+# The C6 ships with ESP-Hosted-MCU slave firmware on SDIO. esp_wifi_remote
+# 0.4.1 / esp_hosted 0.0.27 match what the board vendor built it against.
+# Pins (CLK 18, CMD 19, D0-D3 14-17, C6 reset 54) are the component defaults
+# for ESP32-P4 + ESP32-C6 and match this board.
+CONFIG_SLAVE_IDF_TARGET_ESP32C6=y
+CONFIG_ESP_WIFI_REMOTE_LIBRARY_HOSTED=y
+CONFIG_ESP_SDIO_HOST_INTERFACE=y
+CONFIG_SLAVE_CHIPSET_ESP32C6=y

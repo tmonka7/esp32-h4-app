@@ -20,7 +20,11 @@ $RegistryPins = @(
     @{ ns = 'espressif'; name = 'esp_lvgl_port';   ver = '2.4.4' },
     @{ ns = 'espressif'; name = 'esp_lcd_touch';   ver = '1.1.2' },
     @{ ns = 'espressif'; name = 'esp_codec_dev';   ver = '1.3.4' },
-    @{ ns = 'espressif'; name = 'cmake_utilities'; ver = '0.5.3' }
+    @{ ns = 'espressif'; name = 'cmake_utilities'; ver = '0.5.3' },
+    # Wi-Fi via the ESP32-C6. Same versions the board vendor built its C6
+    # slave firmware against; esp_wifi_remote 0.4.1 covers IDF v5.3 and v5.4.
+    @{ ns = 'espressif'; name = 'esp_hosted';      ver = '0.0.27' },
+    @{ ns = 'espressif'; name = 'esp_wifi_remote'; ver = '0.4.1' }
 )
 
 $GuitionRaw = 'https://raw.githubusercontent.com/sukesh-ak/JC8012P4A1-GUITION-ESP32-P4_ESP32-C6/main/1-Demo/idf-examples/common_components'
@@ -87,11 +91,23 @@ include dir. Keep the matching CONFIG_LV_* options off (see sdkconfig.defaults).
     $trim = @(
         'esp_lvgl_port\test_apps', 'esp_lvgl_port\docs', 'esp_lvgl_port\examples',
         'esp_lvgl_port\images\lvgl8', 'esp_codec_dev\test_apps',
-        'cmake_utilities\test_apps', 'cmake_utilities\docs'
+        'cmake_utilities\test_apps', 'cmake_utilities\docs',
+        'esp_hosted\docs', 'esp_hosted\examples', 'esp_hosted\slave',
+        'esp_hosted\host\port\examples', 'esp_hosted\.gitmodules',
+        'esp_wifi_remote\examples', 'esp_wifi_remote\test',
+        'esp_wifi_remote\scripts', 'esp_wifi_remote\.cz.yaml'
     )
     foreach ($t in $trim) {
         $p = Join-Path $Components $t
         if (Test-Path $p) { Remove-Item -Recurse -Force $p }
+    }
+
+    # --- local patches -------------------------------------------------------
+    Say 'applying tools\patches'
+    Get-ChildItem -Path (Join-Path $RepoRoot 'tools\patches') -Filter '*.patch' | ForEach-Object {
+        Write-Host "  $($_.Name)"
+        git -C $RepoRoot apply $_.FullName
+        if ($LASTEXITCODE -ne 0) { throw "patch $($_.Name) did not apply" }
     }
 
     # --- Guition board drivers ----------------------------------------------

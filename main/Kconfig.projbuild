@@ -10,3 +10,22 @@ menu "Camera remote view"
             precedence over this default.
 
 endmenu
+
+menu "Wi-Fi (ESP32-C6 via ESP-Hosted)"
+
+    config APP_WIFI_SSID
+        string "Network name (SSID)"
+        default ""
+        help
+            Access point to join. The camera stream is fetched over this link.
+            For an ESP32-CAM in its own AP mode this is the camera's SSID and
+            the stream is at http://192.168.4.1:81/stream. Leave empty to keep
+            Wi-Fi off.
+
+    config APP_WIFI_PASSWORD
+        string "Password"
+        default ""
+        help
+            Empty for an open network.
+
+endmenu

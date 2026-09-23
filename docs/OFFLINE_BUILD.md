@@ -38,6 +38,8 @@ reintroduced a manifest — that is the thing to look for.
 | `components/esp_lcd_touch` | 1.1.2 | `espressif/esp_lcd_touch` |
 | `components/esp_codec_dev` | 1.3.4 | `espressif/esp_codec_dev` |
 | `components/cmake_utilities` | 0.5.3 | `espressif/cmake_utilities` |
+| `components/esp_hosted` | 0.0.27 | `espressif/esp_hosted` (host side: `docs/`, `examples/`, `slave/` removed) |
+| `components/esp_wifi_remote` | 0.4.1 | `espressif/esp_wifi_remote` |
 | `components/esp_lcd_jd9365` | 1.0.2 | Guition vendor package (originally `espressif/esp_lcd_jd9365` from esp-iot-solution) |
 | `components/esp_lcd_touch_gsl3680` | vendor | Guition vendor package |
 | `components/bsp_jc8012p4a1` | — | written for this board |
@@ -104,3 +106,20 @@ python $IDF_PATH/tools/idf_tools.py download --all
 
 on a networked machine, then copy `$IDF_TOOLS_PATH/dist` across and run
 `idf_tools.py install` offline.
+
+## Local patches
+
+`tools/patches/*.patch` are applied by both vendor scripts after download.
+
+- `esp_hosted-sdio-shared-host.patch`: the TF card (slot 0) and the ESP32-C6
+  link (slot 1) share one SDMMC controller. On ESP-IDF v5.3 a second
+  `sdmmc_host_init()` returns `ESP_ERR_INVALID_STATE`, which made ESP-Hosted
+  give up whenever the card had been mounted first. The patch accepts it.
+
+`esp_hosted` 0.0.27 and `esp_wifi_remote` 0.4.1 are the versions in the board
+vendor's `esp_brookesia_phone` lock file, i.e. what the shipped C6 slave
+firmware was built against. The host and slave RPC protocol has to match, so
+do not bump `esp_hosted` without also reflashing the C6 with a matching slave.
+`eppp_link` and `esp_serial_slave_link` are declared in the registry manifests
+but not referenced by either component's CMake in the ESP-Hosted
+configuration, so they are not vendored.

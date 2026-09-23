@@ -3,7 +3,8 @@
 # Guition JC8012P4A1 : ESP32-P4NRW32 + ESP32-C6, 10.1" 800x1280 MIPI-DSI (JD9365),
 # GSL3680 capacitive touch, ES8311 codec, TF card, RX8025T RTC.
 #
-# Built against ESP-IDF v5.3 (also builds on v5.4 / v5.5).
+# Built against ESP-IDF v5.3 (also builds on v5.4; not v5.5 - the vendored
+# esp_wifi_remote 0.4.1 only has v5.3 / v5.4 Wi-Fi headers).
 # Fully offline: every dependency is vendored under components/, there is no
 # idf_component.yml anywhere in the tree, so the component manager never
 # contacts components.espressif.com.

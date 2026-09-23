@@ -3,7 +3,7 @@
  *
  * Boot order:
  *   1. Board bring-up (I2C, power sense, RTC, display, touch, LVGL, UART,
- *      TF card, audio codec).
+ *      TF card, audio codec), then Wi-Fi through the ESP32-C6.
  *   2. Report what is present on the console, so a headless board still tells
  *      you what worked.
  *   3. Build the UI under the LVGL lock and hand over to the LVGL task.
@@ -13,6 +13,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 
+#include "app_wifi.h"
 #include "bsp/bsp_uart_test.h"
 #include "bsp/jc8012p4a1.h"
 #include "esp_app_desc.h"
@@ -42,7 +43,7 @@ static void log_boot_banner(void)
     ESP_LOGI(TAG, "================================================");
 }
 
-static void log_peripheral_summary(void)
+static void log_peripheral_summary(esp_err_t wifi_err)
 {
     ESP_LOGI(TAG, "peripheral summary:");
     ESP_LOGI(TAG, "  display   JD9365 800x1280 MIPI-DSI  : up");
@@ -54,6 +55,10 @@ static void log_peripheral_summary(void)
              bsp_audio_is_ready() ? "up" : "not detected");
     ESP_LOGI(TAG, "  tf card   SDMMC slot 0              : %s",
              bsp_sdcard_is_mounted() ? "mounted at " BSP_SD_MOUNT_POINT : "not mounted");
+    ESP_LOGI(TAG, "  wifi      ESP32-C6 over SDIO slot 1  : %s",
+             wifi_err == ESP_OK ? "started, joining " CONFIG_APP_WIFI_SSID
+             : wifi_err == ESP_ERR_INVALID_STATE ? "off (no SSID configured)"
+             : esp_err_to_name(wifi_err));
     ESP_LOGI(TAG, "  console   UART0 GPIO%d TX / GPIO%d RX : up (you are reading it)",
              BSP_UART0_TX, BSP_UART0_RX);
     ESP_LOGI(TAG, "  test uart UART%d GPIO%d TX / GPIO%d RX : installed",
@@ -76,7 +81,10 @@ void app_main(void)
 
     ESP_ERROR_CHECK(bsp_board_init());
 
-    log_peripheral_summary();
+    /* Non-fatal: the UI works without a network and says so where it matters. */
+    const esp_err_t wifi_err = app_wifi_start();
+
+    log_peripheral_summary(wifi_err);
 
     /* Everything touching lv_* has to hold the port lock, including the
      * initial build, because the LVGL task is already running by now. */

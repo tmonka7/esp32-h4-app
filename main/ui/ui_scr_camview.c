@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "app_wifi.h"
 #include "cam_stream.h"
 
 #define FRAME_POLL_MS 15
@@ -328,10 +329,9 @@ void ui_tick_camview(void)
     lv_label_set_text(s_drop_val, buf);
 
     if (st.state == CAM_STREAM_NO_NETWORK) {
-        lv_label_set_text(s_msg,
-                          "No network interface is up. Wi-Fi is on the ESP32-C6 "
-                          "co-processor, which this firmware does not bring up yet, "
-                          "so the camera cannot be reached.");
+        char wifi[96];
+        app_wifi_status(wifi, sizeof(wifi));
+        lv_label_set_text_fmt(s_msg, "No network yet. %s", wifi);
     } else {
         lv_label_set_text(s_msg, st.message);
     }

@@ -3,7 +3,8 @@
 Smart Control Panel firmware for the **Guition JC8012P4A1** — ESP32-P4NRW32 +
 ESP32-C6, 10.1" 800×1280 MIPI-DSI panel, GSL3680 capacitive touch.
 
-Built against **ESP-IDF v5.3** (also builds on v5.4 / v5.5). **Builds fully
+Built against **ESP-IDF v5.3** (also builds on v5.4; not v5.5, because the
+vendored `esp_wifi_remote` 0.4.1 only ships v5.3 / v5.4 Wi-Fi headers). **Builds fully
 offline** — every dependency is committed under `components/`, and there is no
 `idf_component.yml` anywhere in the tree, so the component manager never
 contacts `components.espressif.com`.
@@ -128,7 +129,7 @@ Summary:
 | Audio ES8311 + NS4150 | MCLK 13, BCLK 12, WS 10, DOUT 9, DIN 11, PA_CTRL 20 |
 | Battery sense | GPIO52 = ADC2 ch3, divider 68 k / 100 k |
 | Console UART0 | TX 37, RX 38 |
-| ESP32-C6 (SDIO, unused here) | CLK 18, CMD 19, D0–D3 14–17, RST 54 |
+| ESP32-C6 (SDIO slot 1, ESP-Hosted) | CLK 18, CMD 19, D0–D3 14–17, RST 54 |
 | WS2812 LED | GPIO26 |
 
 ---
@@ -144,6 +145,8 @@ Summary:
 | `esp_lcd_touch` | 1.1.2 | ESP Component Registry |
 | `esp_codec_dev` | 1.3.4 | ESP Component Registry |
 | `cmake_utilities` | 0.5.3 | ESP Component Registry |
+| `esp_hosted` | 0.0.27 | ESP Component Registry, host side only, 1 local patch |
+| `esp_wifi_remote` | 0.4.1 | ESP Component Registry |
 | `esp_lcd_jd9365` | 1.0.2 | Guition vendor package |
 | `esp_lcd_touch_gsl3680` | vendor | Guition vendor package |
 | `bsp_jc8012p4a1` | this repo | written for this board |
@@ -182,14 +185,22 @@ Known deliberate limitations, not bugs:
   exercises the same decode-and-blit path a real player would.
 - **Camera.** Capture needs `esp_cam_sensor` + `esp_video`, which are not
   vendored, and the board ships without a sensor on the CSI connector.
-- **Wi-Fi / Bluetooth.** Would need `esp_hosted`/`esp_wifi_remote` driving the
-  ESP32-C6 over SDIO. Not brought up; support in v5.3 is immature.
+- **Wi-Fi is station-only and configured at build time.** The P4 is the
+  ESP-Hosted *host*; the C6 keeps the ESP-Hosted-MCU slave firmware it ships
+  with (`JC8012P4A1_C6.bin` in the vendor package; reflash that if the C6 was
+  overwritten). Set the network under `menuconfig > Wi-Fi (ESP32-C6 via
+  ESP-Hosted)`. There is no on-device network picker yet, and Bluetooth is
+  not brought up.
+- **TF card and Wi-Fi share one SDMMC controller** (slot 0 and slot 1). On
+  v5.3 the controller can only be torn down as a whole, so unmounting the card
+  leaves it running; `tools/patches/` makes ESP-Hosted accept a controller the
+  card already initialised.
 - **Cam Remote needs a network.** The Cam Remote screen shows a network
   camera's multipart MJPEG stream (`GET http://<camera>:81/stream`, as served
   by ESP32-CAM CameraWebServer), decoded with LVGL's TJpgDec (baseline JPEG,
   up to 1920x1080). The URL defaults to `CONFIG_APP_CAM_STREAM_URL` and can be
-  edited on the device (kept in NVS). Until a network interface is brought up
-  (see Wi-Fi above) it reports "No network" instead of opening a socket.
+  edited on the device (kept in NVS). Until Wi-Fi has an IP address it
+  reports the Wi-Fi state instead of opening a socket.
 - **Software rotation costs frame rate.** Landscape needs a 90° software
   rotate of every flushed area. ESP-IDF v5.4+ can offload this to the P4's PPA;
   v5.3 cannot. If you want maximum speed on v5.3, choose

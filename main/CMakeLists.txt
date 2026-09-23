@@ -2,6 +2,7 @@ idf_component_register(
     SRCS
         "main.c"
         "app_wav.c"
+        "app_wifi.c"
         "cam_stream.c"
         "ui/ui_theme.c"
         "ui/ui_shell.c"
@@ -27,4 +28,8 @@ idf_component_register(
         fatfs
         esp_http_client  # Cam Remote: MJPEG over HTTP
         esp_netif
+        esp_event
+        esp_wifi         # API only; esp_wifi_remote forwards it to the C6
+        esp_wifi_remote
+        esp_hosted
 )

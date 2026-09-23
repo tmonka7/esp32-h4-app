@@ -13,6 +13,7 @@
 #include <string.h>
 #include <time.h>
 
+#include "app_wifi.h"
 #include "bsp/jc8012p4a1.h"
 
 /* Per-screen builders, defined in the ui_scr_*.c files. */
@@ -62,6 +63,7 @@ static lv_obj_t      *s_back;
 static lv_obj_t      *s_clock;
 static lv_obj_t      *s_batt_icon;
 static lv_obj_t      *s_batt_text;
+static lv_obj_t      *s_wifi_icon;
 static lv_obj_t      *s_navbar;
 static lv_obj_t      *s_nav_btn[UI_SCR_COUNT];
 static ui_screen_id_t s_current = UI_SCR_HOME;
@@ -99,6 +101,9 @@ static void statusbar_refresh(void)
     char buf[32];
     strftime(buf, sizeof(buf), "%H:%M", &tm_now);
     lv_label_set_text(s_clock, buf);
+
+    lv_obj_set_style_text_color(s_wifi_icon,
+                                app_wifi_is_connected() ? UI_COL_GREEN : UI_COL_TEXT_DIM, 0);
 
     int mv = 0;
     if (bsp_power_battery_mv(&mv) == ESP_OK) {
@@ -162,13 +167,13 @@ static void build_statusbar(void)
     s_batt_icon = ui_label(bar, LV_SYMBOL_BATTERY_FULL, &lv_font_montserrat_16, UI_COL_GREEN);
     lv_obj_align_to(s_batt_icon, s_batt_text, LV_ALIGN_OUT_LEFT_MID, -8, 0);
 
-    /* The Wi-Fi/BT radios live on the ESP32-C6 co-processor, which this
-     * firmware does not bring up. Show them dimmed rather than green so the
-     * status bar never claims a link that does not exist. */
+    /* Both radios live on the ESP32-C6. Wi-Fi is driven through ESP-Hosted
+     * and turns green only once the station holds an IP address; Bluetooth
+     * is not brought up, so it stays dimmed. */
     lv_obj_t *bt = ui_label(bar, LV_SYMBOL_BLUETOOTH, &lv_font_montserrat_16, UI_COL_TEXT_DIM);
     lv_obj_align(bt, LV_ALIGN_RIGHT_MID, -110, 0);
-    lv_obj_t *wifi = ui_label(bar, LV_SYMBOL_WIFI, &lv_font_montserrat_16, UI_COL_TEXT_DIM);
-    lv_obj_align(wifi, LV_ALIGN_RIGHT_MID, -145, 0);
+    s_wifi_icon = ui_label(bar, LV_SYMBOL_WIFI, &lv_font_montserrat_16, UI_COL_TEXT_DIM);
+    lv_obj_align(s_wifi_icon, LV_ALIGN_RIGHT_MID, -145, 0);
 
     s_clock = ui_label(bar, "--:--", &lv_font_montserrat_20, UI_COL_TEXT);
     lv_obj_align(s_clock, LV_ALIGN_RIGHT_MID, -190, 0);
