@@ -62,8 +62,10 @@ rather than showing a plausible number. Two examples:
 - **Charge state.** The IP5306 fitted here is the button/LED variant with no
   I²C, and its LED1–LED3 outputs are not wired to the ESP32-P4. Only the
   terminal voltage is observable, so that is all the Battery screen claims.
-- **Wi-Fi / Bluetooth.** Both radios live on the ESP32-C6 co-processor, which
-  this firmware does not bring up. The status-bar icons stay dimmed.
+- **Bluetooth.** Both radios live on the ESP32-C6 co-processor. Wi-Fi is
+  brought up as a SoftAP through ESP-Hosted and the status-bar icon turns
+  green once it is beaconing; Bluetooth is not brought up, so that icon
+  stays dimmed.
 
 ---
 
@@ -185,12 +187,16 @@ Known deliberate limitations, not bugs:
   exercises the same decode-and-blit path a real player would.
 - **Camera.** Capture needs `esp_cam_sensor` + `esp_video`, which are not
   vendored, and the board ships without a sensor on the CSI connector.
-- **Wi-Fi is station-only and configured at build time.** The P4 is the
+- **Wi-Fi is SoftAP-only and configured at build time.** The panel *is* the
+  access point (`WIFI_MODE_AP`): it beacons `CONFIG_APP_WIFI_SSID`, runs the
+  DHCP server and sits at 192.168.4.1, so clients - the camera, a phone - join
+  it. There is no station link and no uplink to a router. The P4 is the
   ESP-Hosted *host*; the C6 keeps the ESP-Hosted-MCU slave firmware it ships
   with (`JC8012P4A1_C6.bin` in the vendor package; reflash that if the C6 was
-  overwritten). Set the network under `menuconfig > Wi-Fi (ESP32-C6 via
-  ESP-Hosted)`. There is no on-device network picker yet, and Bluetooth is
-  not brought up.
+  overwritten). Set SSID, password, channel and client limit under
+  `menuconfig > Wi-Fi (ESP32-C6 via ESP-Hosted)`; an empty SSID keeps Wi-Fi
+  off. There is no on-device network picker yet, and Bluetooth is not brought
+  up.
 - **TF card and Wi-Fi share one SDMMC controller** (slot 0 and slot 1). On
   v5.3 the controller can only be torn down as a whole, so unmounting the card
   leaves it running; `tools/patches/` makes ESP-Hosted accept a controller the
@@ -199,7 +205,9 @@ Known deliberate limitations, not bugs:
   camera's multipart MJPEG stream (`GET http://<camera>:81/stream`, as served
   by ESP32-CAM CameraWebServer), decoded with LVGL's TJpgDec (baseline JPEG,
   up to 1920x1080). The URL defaults to `CONFIG_APP_CAM_STREAM_URL` and can be
-  edited on the device (kept in NVS). Until Wi-Fi has an IP address it
+  edited on the device (kept in NVS). With the panel as the AP the camera is
+  a DHCP client of it, so the address it gets (192.168.4.2 upwards - the
+  console logs each lease) is what belongs in that URL. Until the AP is up it
   reports the Wi-Fi state instead of opening a socket.
 - **Software rotation costs frame rate.** Landscape needs a 90° software
   rotate of every flushed area. ESP-IDF v5.4+ can offload this to the P4's PPA;

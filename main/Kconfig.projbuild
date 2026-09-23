@@ -13,19 +13,42 @@ endmenu
 
 menu "Wi-Fi (ESP32-C6 via ESP-Hosted)"
 
+    comment "The panel is the access point (WIFI_MODE_AP): it beacons this"
+    comment "network, runs the DHCP server and sits at 192.168.4.1."
+
     config APP_WIFI_SSID
-        string "Network name (SSID)"
+        string "SoftAP network name (SSID)"
         default ""
         help
-            Access point to join. The camera stream is fetched over this link.
-            For an ESP32-CAM in its own AP mode this is the camera's SSID and
-            the stream is at http://192.168.4.1:81/stream. Leave empty to keep
-            Wi-Fi off.
+            Name of the network the panel broadcasts. Clients - the camera,
+            a phone - join it and are leased 192.168.4.2 upwards. Leave empty
+            to keep Wi-Fi off.
 
     config APP_WIFI_PASSWORD
-        string "Password"
+        string "SoftAP password (WPA2)"
         default ""
         help
-            Empty for an open network.
+            At least 8 characters, or empty for an open network. A shorter
+            non-empty password is refused at start-up rather than silently
+            downgraded to an open AP.
+
+    config APP_WIFI_CHANNEL
+        int "SoftAP channel"
+        range 1 13
+        default 6
+        help
+            2.4 GHz channel to beacon on. 1, 6 and 11 do not overlap.
+
+    config APP_WIFI_MAX_CONN
+        int "Maximum associated clients"
+        range 1 10
+        default 4
+
+    config APP_WIFI_HIDDEN
+        bool "Hide the SSID"
+        default n
+        help
+            Stop broadcasting the SSID in beacons. Clients must then be told
+            the name by hand; it is not a security measure.
 
 endmenu

@@ -56,8 +56,9 @@ static void log_peripheral_summary(esp_err_t wifi_err)
     ESP_LOGI(TAG, "  tf card   SDMMC slot 0              : %s",
              bsp_sdcard_is_mounted() ? "mounted at " BSP_SD_MOUNT_POINT : "not mounted");
     ESP_LOGI(TAG, "  wifi      ESP32-C6 over SDIO slot 1  : %s",
-             wifi_err == ESP_OK ? "started, joining " CONFIG_APP_WIFI_SSID
+             wifi_err == ESP_OK ? "SoftAP \"" CONFIG_APP_WIFI_SSID "\" starting"
              : wifi_err == ESP_ERR_INVALID_STATE ? "off (no SSID configured)"
+             : wifi_err == ESP_ERR_INVALID_ARG ? "off (AP password too short)"
              : esp_err_to_name(wifi_err));
     ESP_LOGI(TAG, "  console   UART0 GPIO%d TX / GPIO%d RX : up (you are reading it)",
              BSP_UART0_TX, BSP_UART0_RX);

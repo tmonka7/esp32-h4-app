@@ -168,8 +168,8 @@ static void build_statusbar(void)
     lv_obj_align_to(s_batt_icon, s_batt_text, LV_ALIGN_OUT_LEFT_MID, -8, 0);
 
     /* Both radios live on the ESP32-C6. Wi-Fi is driven through ESP-Hosted
-     * and turns green only once the station holds an IP address; Bluetooth
-     * is not brought up, so it stays dimmed. */
+     * and turns green once the panel's own SoftAP is up - whether or not
+     * anyone has joined it; Bluetooth is not brought up, so it stays dimmed. */
     lv_obj_t *bt = ui_label(bar, LV_SYMBOL_BLUETOOTH, &lv_font_montserrat_16, UI_COL_TEXT_DIM);
     lv_obj_align(bt, LV_ALIGN_RIGHT_MID, -110, 0);
     s_wifi_icon = ui_label(bar, LV_SYMBOL_WIFI, &lv_font_montserrat_16, UI_COL_TEXT_DIM);
